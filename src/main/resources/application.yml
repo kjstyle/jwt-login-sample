@@ -1,0 +1,4 @@
+spring:
+  security:
+    secret: dgdE7unlvo0lzoEzDtCbjcBH90062kVW
+    expiration: 86400000 # 1?
