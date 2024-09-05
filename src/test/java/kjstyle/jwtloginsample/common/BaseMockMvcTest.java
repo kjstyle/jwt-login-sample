@@ -23,7 +23,7 @@ public abstract class BaseMockMvcTest extends BaseTest {
         // 한글 깨짐 방지 처리
         this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))  // 필터 추가
-                // .alwaysExpect(MockMvcResultMatchers.status().isOk()) // 모든 테스트에서 200OK를 기대하도록 설정
+                // .alwaysExpect(MockMvcResultMatchers.status().isOk()) // 모든 테스트에서 200OK를 기대하도록 설정..인데 200외 응답도 테스트하므로 주석처리해둠
                 .alwaysDo(print()) // 모든 테스트에서 출력을 하도록 설정
                 .build();
     }

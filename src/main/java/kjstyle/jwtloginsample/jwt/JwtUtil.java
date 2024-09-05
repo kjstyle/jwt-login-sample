@@ -1,4 +1,4 @@
-package kjstyle.jwtloginsample.security;
+package kjstyle.jwtloginsample.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

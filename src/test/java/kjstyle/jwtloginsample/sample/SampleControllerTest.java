@@ -3,7 +3,7 @@ package kjstyle.jwtloginsample.sample;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kjstyle.jwtloginsample.auth.LoginUser;
 import kjstyle.jwtloginsample.common.BaseMockMvcTest;
-import kjstyle.jwtloginsample.security.JwtUtil;
+import kjstyle.jwtloginsample.jwt.JwtUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

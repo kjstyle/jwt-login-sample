@@ -1,4 +1,4 @@
-package kjstyle.jwtloginsample.security;
+package kjstyle.jwtloginsample.jwt;
 
 import kjstyle.jwtloginsample.auth.LoginUser;
 import kjstyle.jwtloginsample.common.BaseTest;
