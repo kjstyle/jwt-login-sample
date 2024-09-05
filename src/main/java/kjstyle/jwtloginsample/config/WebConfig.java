@@ -1,9 +1,11 @@
 package kjstyle.jwtloginsample.config;
 
 import kjstyle.jwtloginsample.auth.LoginUserArgumentResolver;
+import kjstyle.jwtloginsample.interceptor.AuthenticationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -13,9 +15,18 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     private final LoginUserArgumentResolver loginUserArgumentResolver;
+    private final AuthenticationInterceptor authenticationInterceptor;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginUserArgumentResolver);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authenticationInterceptor)
+                .order(1)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/", "/open/*");
     }
 }
