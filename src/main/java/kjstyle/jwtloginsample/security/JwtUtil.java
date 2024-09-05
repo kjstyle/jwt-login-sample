@@ -15,7 +15,10 @@ import io.jsonwebtoken.Jwts;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-
+/**
+ * jjwt 기반으로 만듬
+ * 참고 : https://github.com/jwtk/jjwt
+ */
 @Slf4j
 @Component
 public class JwtUtil {

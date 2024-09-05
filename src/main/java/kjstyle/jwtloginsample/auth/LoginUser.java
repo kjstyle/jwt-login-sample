@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * 컨트롤러에 넘겨줄 로그인한회원의 정보를 담는 용도
+ */
 @Getter
 @ToString
 @Builder
