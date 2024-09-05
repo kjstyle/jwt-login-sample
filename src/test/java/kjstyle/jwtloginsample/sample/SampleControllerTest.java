@@ -25,7 +25,7 @@ class SampleControllerTest extends BaseMockMvcTest {
     void arguemntResolverTest() throws Exception {
         final ResultActions actions = mockMvc.perform(get("/echo-login-user").contentType(MediaType.APPLICATION_JSON));
         actions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.userNo").value(4))
+                .andExpect(jsonPath("$.userNo").value(7))
                 .andExpect(jsonPath("$.userId").value("kjstyle"));
     }
 }

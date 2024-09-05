@@ -12,7 +12,7 @@ public class SampleController {
 
     @GetMapping(value = "/echo-login-user")
     public LoginUser arguemntResolverTest(LoginUser loginUser) {
-        log.info("loginUser : " + loginUser);
+        log.debug("loginUser : {} ", loginUser);
         return loginUser;
     }
 }
