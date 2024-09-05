@@ -3,6 +3,7 @@ package kjstyle.jwtloginsample.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import kjstyle.jwtloginsample.auth.LoginUser;
+import kjstyle.jwtloginsample.exceptions.InvalidTokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -39,15 +40,25 @@ public class JwtUtil {
     }
 
     public LoginUser getLoginUserFromAccessToken(String accessToken) {
-        Claims claims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload();
+        Claims claims = getClaims(accessToken);
 
         return LoginUser.builder()
                 .userNo(claims.get(USER_NO_KEY_NAME, Long.class))
                 .userId(claims.get(USER_ID_KEY_NAME, String.class))
                 .build();
+    }
+
+    private  Claims getClaims(String accessToken) {
+        Claims claims ;
+        try {
+            claims = Jwts.parser()
+                    .verifyWith(key) // 단순히 key 타입만 검증하더라...
+                    .build()
+                    .parseSignedClaims(accessToken)
+                    .getPayload();
+        } catch(Exception e) {
+            throw new InvalidTokenException("비정상적인 토큰이래요~");
+        }
+        return claims;
     }
 }
