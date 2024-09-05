@@ -1,8 +1,10 @@
 package kjstyle.jwtloginsample.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.Keys;
 import kjstyle.jwtloginsample.auth.LoginUser;
+import kjstyle.jwtloginsample.exceptions.ExpiredTokenException;
 import kjstyle.jwtloginsample.exceptions.InvalidTokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,18 +29,41 @@ public class JwtUtil {
     private static final String USER_NO_KEY_NAME = "userNo";
     private final String USER_ID_KEY_NAME = "userId";
 
+    /**
+     * 액세스 토큰생성해주는 메서드
+     *   별일 없으면 이걸 사용하세요
+     * @param loginUser
+     * @return
+     */
     public String createAccessToken(LoginUser loginUser) {
+        return this.createAccessToken(loginUser, EXPIRATION_TIME_MS);
+    }
+
+    /**
+     * 액세스 토큰생성해주는 메서드 (만료시간을 파라미터로 받는 오버로딩된 메서드)
+     *  굳이 만료시간을 다르게 가져가야할 경우만 사용하도록 오버로딩해둠
+     *  되도록이면  createAccessToken()를 사용해서 토큰생성바람
+     * @param loginUser
+     * @param expirationTimeMs
+     * @return
+     */
+    public String createAccessToken(LoginUser loginUser, long expirationTimeMs) {
         String token = Jwts.builder()
                 .claim(USER_NO_KEY_NAME, loginUser.getUserNo())
                 .claim(USER_ID_KEY_NAME, loginUser.getUserId())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
+                .expiration(new Date(System.currentTimeMillis() + expirationTimeMs))
                 .signWith(key)
                 .compact();
         log.debug("created token : {} ", token);
         return token;
     }
 
+    /**
+     * 액세스 토큰에서 로그인유저정보 꺼내오기
+     * @param accessToken
+     * @return
+     */
     public LoginUser getLoginUserFromAccessToken(String accessToken) {
         Claims claims = getClaims(accessToken);
 
@@ -48,7 +73,12 @@ public class JwtUtil {
                 .build();
     }
 
-    private  Claims getClaims(String accessToken) {
+    /**
+     * 토큰으로부터 클레임 꺼내기 (예외처리를 위해 별도 메서드로 분리시킴)
+     * @param accessToken
+     * @return
+     */
+    private Claims getClaims(String accessToken) {
         Claims claims ;
         try {
             claims = Jwts.parser()
@@ -56,8 +86,10 @@ public class JwtUtil {
                     .build()
                     .parseSignedClaims(accessToken)
                     .getPayload();
-        } catch(Exception e) {
-            throw new InvalidTokenException("비정상적인 토큰이래요~");
+        } catch(ExpiredJwtException eje) { // 만료된 토큰일 경우 발생하는 Exception
+            throw new ExpiredTokenException(); // 내가 만든 Exception으로 바꿔서 던짐 -> 리프레시토큰 로직으로 분기되어야함
+        } catch(Exception e) { // 기타 나머지(변조되었거나, 형식이 안맞거나 등등등)는 퉁쳐서 비정상 토큰으로 간주
+            throw new InvalidTokenException();
         }
         return claims;
     }
