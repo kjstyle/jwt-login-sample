@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SampleController {
 
     @GetMapping(value = "/echo-login-user")
-    public LoginUser arguemntResolverTest(LoginUser loginUser) {
+    public LoginUser arguemntResolverTest(final LoginUser loginUser) {
         log.debug("loginUser : {} ", loginUser);
         return loginUser;
     }

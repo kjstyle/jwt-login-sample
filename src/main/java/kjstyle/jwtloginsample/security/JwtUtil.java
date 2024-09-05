@@ -35,7 +35,7 @@ public class JwtUtil {
      * @param loginUser
      * @return
      */
-    public String createAccessToken(LoginUser loginUser) {
+    public String createAccessToken(final LoginUser loginUser) {
         return this.createAccessToken(loginUser, EXPIRATION_TIME_MS);
     }
 
@@ -47,7 +47,7 @@ public class JwtUtil {
      * @param expirationTimeMs
      * @return
      */
-    public String createAccessToken(LoginUser loginUser, long expirationTimeMs) {
+    public String createAccessToken(final LoginUser loginUser, final long expirationTimeMs) {
         String token = Jwts.builder()
                 .claim(USER_NO_KEY_NAME, loginUser.getUserNo())
                 .claim(USER_ID_KEY_NAME, loginUser.getUserId())
@@ -64,7 +64,7 @@ public class JwtUtil {
      * @param accessToken
      * @return
      */
-    public LoginUser getLoginUserFromAccessToken(String accessToken) {
+    public LoginUser getLoginUserFromAccessToken(final String accessToken) {
         Claims claims = getClaims(accessToken);
 
         return LoginUser.builder()
@@ -78,7 +78,7 @@ public class JwtUtil {
      * @param accessToken
      * @return
      */
-    private Claims getClaims(String accessToken) {
+    private Claims getClaims(final String accessToken) {
         Claims claims ;
         try {
             claims = Jwts.parser()

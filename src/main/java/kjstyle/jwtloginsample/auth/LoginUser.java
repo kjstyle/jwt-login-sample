@@ -15,7 +15,7 @@ public class LoginUser {
     private final String userId;
 
     @Builder
-    public LoginUser(long userNo, String userId) {
+    public LoginUser(final long userNo, final String userId) {
         this.userNo = userNo;
         this.userId = userId;
     }
