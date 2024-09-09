@@ -1,5 +1,6 @@
 package kjstyle.jwtloginsample.interceptor;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kjstyle.jwtloginsample.auth.LoginUser;
@@ -21,6 +22,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String accessToken = this.extractAccessTokenFromHeader(request);
+        if (accessToken == null) {
+            accessToken = this.extractAccessTokenFromCookie(request);
+        }
+
         try {
             LoginUser loginUser = jwtUtil.getLoginUserFromAccessToken(accessToken);
             request.setAttribute("loginUser", loginUser);
@@ -46,6 +51,17 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    private String extractAccessTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        for (Cookie c : cookies) {
+            if ("AUTH_ACCESS_TOKEN".equals(c.getName())) {
+                return c.getValue();
+            }
         }
         return null;
     }
