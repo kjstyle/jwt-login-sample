@@ -29,20 +29,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             LoginUser loginUser = jwtUtil.getLoginUserFromAccessToken(accessToken);
             request.setAttribute("loginUser", loginUser);
         } catch (ExpiredTokenException ete) {
-            // 만료된 토큰으로 리프레시 토큰으로 토큰 재발급하는 로직을 짜야함
+            // TODO : 만료된 토큰으로 리프레시 토큰으로 토큰 재발급하는 로직을 짜야함
         } catch (InvalidTokenException ite) {
             throw new UnauthenticatedException();
         }
         return true;
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
 }
