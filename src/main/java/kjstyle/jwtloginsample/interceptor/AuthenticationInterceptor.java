@@ -7,6 +7,7 @@ import kjstyle.jwtloginsample.auth.LoginUser;
 import kjstyle.jwtloginsample.exceptions.ExpiredTokenException;
 import kjstyle.jwtloginsample.exceptions.InvalidTokenException;
 import kjstyle.jwtloginsample.exceptions.UnauthenticatedException;
+import kjstyle.jwtloginsample.jwt.JwtInterceptorHelper;
 import kjstyle.jwtloginsample.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,15 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class AuthenticationInterceptor implements HandlerInterceptor {
     private final JwtUtil jwtUtil;
+    private final JwtInterceptorHelper jwtInterceptorHelper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String accessToken = this.extractAccessTokenFromHeader(request);
-        if (accessToken == null) {
-            accessToken = this.extractAccessTokenFromCookie(request);
-        }
 
         try {
+            String accessToken = jwtInterceptorHelper.extractAccessTokenFromRequest(request);
             LoginUser loginUser = jwtUtil.getLoginUserFromAccessToken(accessToken);
             request.setAttribute("loginUser", loginUser);
         } catch (ExpiredTokenException ete) {
@@ -45,24 +44,5 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
-    }
-
-    private String extractAccessTokenFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
-
-    private String extractAccessTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-
-        for (Cookie c : cookies) {
-            if ("AUTH_ACCESS_TOKEN".equals(c.getName())) {
-                return c.getValue();
-            }
-        }
-        return null;
     }
 }
