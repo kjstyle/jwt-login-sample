@@ -69,11 +69,7 @@ public class JwtUtil {
      */
     public LoginUser getLoginUserFromAccessToken(final String accessToken) {
         Claims claims = getClaims(accessToken);
-
-        return LoginUser.builder()
-                .userNo(claims.get(USER_NO_KEY_NAME, Long.class))
-                .userId(claims.get(USER_ID_KEY_NAME, String.class))
-                .build();
+        return new LoginUser(claims.get(USER_NO_KEY_NAME, Long.class), claims.get(USER_ID_KEY_NAME, String.class));
     }
 
     /**

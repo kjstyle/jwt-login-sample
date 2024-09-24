@@ -1,6 +1,5 @@
 package kjstyle.jwtloginsample.interceptor;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kjstyle.jwtloginsample.auth.LoginUser;
@@ -11,9 +10,7 @@ import kjstyle.jwtloginsample.jwt.JwtInterceptorHelper;
 import kjstyle.jwtloginsample.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +19,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     private final JwtInterceptorHelper jwtInterceptorHelper;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         try {
             String accessToken = jwtInterceptorHelper.extractAccessTokenFromRequest(request);

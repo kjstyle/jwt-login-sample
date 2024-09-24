@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @AutoConfigureMockMvc // Junit5에서는 이 어노테이션이 있어야 MockMvc주입에 문제가 안생김 (출처 : https://gofnrk.tistory.com/74)
 public abstract class BaseMockMvcTest extends BaseTest {
-    @Autowired
     protected MockMvc mockMvc;
 
     @Autowired

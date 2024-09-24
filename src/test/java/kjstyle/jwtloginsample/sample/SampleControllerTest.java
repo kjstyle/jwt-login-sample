@@ -1,6 +1,5 @@
 package kjstyle.jwtloginsample.sample;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import kjstyle.jwtloginsample.auth.LoginUser;
 import kjstyle.jwtloginsample.common.BaseMockMvcTest;
@@ -17,24 +16,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SampleControllerTest extends BaseMockMvcTest {
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
-
+    private LoginUser testLoginUser = new LoginUser(7L, "kjstyle");
 
     @Test
     void 토큰생성해서_헤더에_토큰넣고_에코컨트롤러_호출해서_정상인지_확인하기() throws Exception {
-        LoginUser testLoginUser = new LoginUser(7,  "kjstyle");
-
+        // given
         String testAccessToken = jwtUtil.createAccessToken(testLoginUser);
 
+        // when
         final ResultActions actions = mockMvc.perform(get("/echo-login-user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + testAccessToken)
         );
 
+        // then
         actions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.userNo").value(testLoginUser.getUserNo()))
                 .andExpect(jsonPath("$.userId").value(testLoginUser.getUserId()));
@@ -42,7 +39,6 @@ class SampleControllerTest extends BaseMockMvcTest {
 
     @Test
     void 토큰생성해서_쿠키에_토큰넣고_에코컨트롤러_호출해서_정상인지_확인하기() throws Exception {
-        LoginUser testLoginUser = new LoginUser(7,  "kjstyle");
 
         String testAccessToken = jwtUtil.createAccessToken(testLoginUser);
 
