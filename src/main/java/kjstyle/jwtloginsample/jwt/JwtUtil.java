@@ -30,7 +30,7 @@ public class JwtUtil {
 
     private static final Long EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24L; // 밀리세컨이라 1000 * 60초 * 60분 * 24시 => 하루
     private static final String USER_NO_KEY_NAME = "userNo";
-    private final String USER_ID_KEY_NAME = "userId";
+    private static final String USER_ID_KEY_NAME = "userId";
 
     /**
      * 액세스 토큰생성해주는 메서드
