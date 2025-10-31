@@ -32,4 +32,28 @@ public class JwtInterceptorHelper {
         }
         throw new InvalidTokenException();
     }
+
+    /**
+     * 리프레시 토큰을 헤더에서 꺼내거나, 쿠키에서 꺼내서 리턴해줌
+     * @param request
+     * @return
+     *   성공 : 리프레시 토큰 문자열
+     *   실패 : 토큰이 없으면 null 리턴
+     */
+    public String extractRefreshTokenFromRequest(HttpServletRequest request) {
+        String refreshTokenHeader = request.getHeader("X-Refresh-Token");
+        if (StringUtils.hasText(refreshTokenHeader)) {
+            return refreshTokenHeader;
+        } else {
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if ("AUTH_REFRESH_TOKEN".equals(c.getName())) {
+                        return c.getValue();
+                    }
+                }
+            }
+        }
+        return null; // 리프레시 토큰이 없으면 null 리턴
+    }
 }
