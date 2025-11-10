@@ -14,6 +14,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
+        // LoginUser 파라미터만 이 리졸버가 처리하도록 제한
         return parameter.getParameterType() == LoginUser.class;
     }
 
@@ -23,6 +24,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
         Object objectLoginUser = servletRequest.getAttribute("loginUser");
         if (objectLoginUser != null && objectLoginUser instanceof LoginUser) {
+            // 인터셉터에서 심어둔 로그인 정보를 그대로 반환
             return (LoginUser) objectLoginUser;
         }
         return null;

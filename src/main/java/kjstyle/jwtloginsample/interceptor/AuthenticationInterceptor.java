@@ -22,7 +22,9 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         try {
+            // 1단계: 요청에서 액세스 토큰을 우선 확보
             String accessToken = jwtInterceptorHelper.extractAccessTokenFromRequest(request);
+            // 2단계: 토큰을 로그인 사용자 정보로 복원해 요청 범위에 저장
             LoginUser loginUser = jwtUtil.getLoginUserFromAccessToken(accessToken);
             request.setAttribute("loginUser", loginUser);
         } catch (ExpiredTokenException ete) {

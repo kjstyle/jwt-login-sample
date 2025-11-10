@@ -35,6 +35,7 @@ public class JwtUtil {
     private static final String REFRESH_TOKEN_TYPE = "REFRESH";
 
     public JwtUtil(JwtProperties jwtProperties) {
+        // 외부 설정에서 전달된 키/만료값으로 JWT 인프라 초기화
         Assert.hasText(jwtProperties.getSecret(), "JWT secret must be provided");
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
         this.accessTokenExpirationMs = jwtProperties.getExpiration();
@@ -60,6 +61,7 @@ public class JwtUtil {
      * @return
      */
     public String createAccessToken(final LoginUser loginUser, final long expirationTimeMs) {
+        // 사용자 식별자와 토큰 타입을 클레임에 담고 서명
         String token = Jwts.builder()
                 .claim(USER_NO_KEY_NAME, loginUser.getUserNo())
                 .claim(USER_ID_KEY_NAME, loginUser.getUserId())
@@ -89,6 +91,7 @@ public class JwtUtil {
      * @return
      */
     public String createRefreshToken(final LoginUser loginUser, final long expirationTimeMs) {
+        // 리프레시 토큰은 동일한 클레임을 담되 타입/만료만 다르게 생성
         String token = Jwts.builder()
                 .claim(USER_NO_KEY_NAME, loginUser.getUserNo())
                 .claim(USER_ID_KEY_NAME, loginUser.getUserId())
@@ -131,6 +134,7 @@ public class JwtUtil {
     private Claims getClaims(final String accessToken) {
         Claims claims ;
         try {
+            // jjwt 파서를 통해 서명 검증과 페이로드 파싱을 한 번에 처리
             claims = Jwts.parser()
                     .verifyWith(key) // 단순히 key 타입만 검증하더라...
                     .build()
@@ -152,6 +156,7 @@ public class JwtUtil {
     private void validateTokenType(final Claims claims, final String expectedType) {
         String tokenType = claims.get(TOKEN_TYPE_KEY_NAME, String.class);
         if (!expectedType.equals(tokenType)) {
+            // ACCESS/REFRESH 혼용 요청은 즉시 차단
             throw new InvalidTokenException();
         }
     }
