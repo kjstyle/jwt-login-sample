@@ -4,10 +4,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.Keys;
 import kjstyle.jwtloginsample.auth.LoginUser;
+import kjstyle.jwtloginsample.config.JwtProperties;
 import kjstyle.jwtloginsample.exceptions.ExpiredTokenException;
 import kjstyle.jwtloginsample.exceptions.InvalidTokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.Jwts;
@@ -23,18 +25,21 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // 터미널에 `openssl rand -hex 32` 명령어 입력시 랜덤한 값을 얻을수 있다.
-    private static final String secretKey = "c294d9d9ac58c5e3c816ccf1c185c745092ff30be8f4d72ba1d7a5d99d2e3aa5";
-
-    private SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-
-    private static final Long EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24L; // 밀리세컨이라 1000 * 60초 * 60분 * 24시 => 하루
-    private static final Long REFRESH_EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24 * 7L; // 7일
+    private final SecretKey key;
+    private final long accessTokenExpirationMs;
+    private final long refreshTokenExpirationMs;
     private static final String USER_NO_KEY_NAME = "userNo";
     private static final String USER_ID_KEY_NAME = "userId";
     private static final String TOKEN_TYPE_KEY_NAME = "tokenType";
     private static final String ACCESS_TOKEN_TYPE = "ACCESS";
     private static final String REFRESH_TOKEN_TYPE = "REFRESH";
+
+    public JwtUtil(JwtProperties jwtProperties) {
+        Assert.hasText(jwtProperties.getSecret(), "JWT secret must be provided");
+        this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
+        this.accessTokenExpirationMs = jwtProperties.getExpiration();
+        this.refreshTokenExpirationMs = jwtProperties.getRefreshExpiration();
+    }
 
     /**
      * 액세스 토큰생성해주는 메서드
@@ -43,7 +48,7 @@ public class JwtUtil {
      * @return
      */
     public String createAccessToken(final LoginUser loginUser) {
-        return this.createAccessToken(loginUser, EXPIRATION_TIME_MS);
+        return this.createAccessToken(loginUser, accessTokenExpirationMs);
     }
 
     /**
@@ -74,7 +79,7 @@ public class JwtUtil {
      * @return
      */
     public String createRefreshToken(final LoginUser loginUser) {
-        return this.createRefreshToken(loginUser, REFRESH_EXPIRATION_TIME_MS);
+        return this.createRefreshToken(loginUser, refreshTokenExpirationMs);
     }
 
     /**

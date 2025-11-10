@@ -1,4 +1,5 @@
 spring:
   security:
     secret: dgdE7unlvo0lzoEzDtCbjcBH90062kVW
-    expiration: 86400000 # 1?
+    expiration: 86400000 # 1 day
+    refresh-expiration: 604800000 # 7 days

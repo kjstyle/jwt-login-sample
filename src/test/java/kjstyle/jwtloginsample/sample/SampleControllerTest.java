@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class SampleControllerTest extends BaseMockMvcTest {
@@ -64,5 +67,22 @@ class SampleControllerTest extends BaseMockMvcTest {
         );
 
         actions.andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void 만료토큰과_리프레시토큰을동시에보내면_재발급되어야한다() throws Exception {
+        String expiredAccessToken = jwtUtil.createAccessToken(testLoginUser, -1000L); // 과거 시점으로 만료 처리
+        String refreshToken = jwtUtil.createRefreshToken(testLoginUser);
+
+        final ResultActions actions = mockMvc.perform(get("/echo-login-user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + expiredAccessToken)
+                .header("X-Refresh-Token", refreshToken)
+        );
+
+        actions.andExpect(status().isOk())
+                .andExpect(header().string("X-New-Access-Token", not(isEmptyOrNullString())))
+                .andExpect(jsonPath("$.userNo").value(testLoginUser.getUserNo()))
+                .andExpect(jsonPath("$.userId").value(testLoginUser.getUserId()));
     }
 }
