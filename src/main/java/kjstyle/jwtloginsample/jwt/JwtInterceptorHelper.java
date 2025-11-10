@@ -23,10 +23,11 @@ public class JwtInterceptorHelper {
             return bearerToken.substring(7);
         } else {
             Cookie[] cookies = request.getCookies();
-
-            for (Cookie c : cookies) {
-                if ("AUTH_ACCESS_TOKEN".equals(c.getName())) {
-                    return c.getValue();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if ("AUTH_ACCESS_TOKEN".equals(c.getName())) {
+                        return c.getValue();
+                    }
                 }
             }
         }
