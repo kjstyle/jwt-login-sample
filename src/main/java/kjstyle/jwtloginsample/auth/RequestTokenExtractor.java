@@ -1,4 +1,4 @@
-package kjstyle.jwtloginsample.jwt;
+package kjstyle.jwtloginsample.auth;
 
 
 import jakarta.servlet.http.Cookie;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
-public class JwtInterceptorHelper {
+public class RequestTokenExtractor {
 
     /**
      * 토큰이 헤더에 있으면 헤더에서 꺼내고, 헤더에 없으면 쿠키에서 꺼내서 리턴해줌

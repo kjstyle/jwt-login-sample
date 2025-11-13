@@ -3,10 +3,10 @@ package kjstyle.jwtloginsample.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kjstyle.jwtloginsample.auth.LoginUser;
+import kjstyle.jwtloginsample.auth.RequestTokenExtractor;
 import kjstyle.jwtloginsample.exceptions.ExpiredTokenException;
 import kjstyle.jwtloginsample.exceptions.InvalidTokenException;
 import kjstyle.jwtloginsample.exceptions.UnauthenticatedException;
-import kjstyle.jwtloginsample.jwt.JwtInterceptorHelper;
 import kjstyle.jwtloginsample.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,14 +16,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class AuthenticationInterceptor implements HandlerInterceptor {
     private final JwtUtil jwtUtil;
-    private final JwtInterceptorHelper jwtInterceptorHelper;
+    private final RequestTokenExtractor requestTokenExtractor;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         try {
             // 1단계: 요청에서 액세스 토큰을 우선 확보
-            String accessToken = jwtInterceptorHelper.extractAccessTokenFromRequest(request);
+            String accessToken = requestTokenExtractor.extractAccessTokenFromRequest(request);
             // 2단계: 토큰을 로그인 사용자 정보로 복원해 요청 범위에 저장
             LoginUser loginUser = jwtUtil.getLoginUserFromAccessToken(accessToken);
             request.setAttribute("loginUser", loginUser);
@@ -44,7 +44,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     private void handleExpiredAccessToken(HttpServletRequest request, HttpServletResponse response) {
         try {
             // 1. 리프레시 토큰 추출
-            String refreshToken = jwtInterceptorHelper.extractRefreshTokenFromRequest(request);
+            String refreshToken = requestTokenExtractor.extractRefreshTokenFromRequest(request);
             if (refreshToken == null) {
                 throw new UnauthenticatedException();
             }
