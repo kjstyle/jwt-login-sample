@@ -101,6 +101,45 @@ The authentication system is designed around **separation of concerns**, keeping
 - **Imports:** Keep organized and remove unused imports
 - **Interceptor methods:** Don't override methods unnecessarily
 
+### Layered Architecture & DTO Convention
+
+**계층간 책임 분리 (Separation of Concerns)**
+
+Service 계층은 비즈니스 로직만 담당하고 Response 형식에 대해 알지 못해야 합니다.
+
+```
+Service 계층          Controller 계층
+┌──────────────┐     ┌──────────────┐
+│ Service DTO  │────→│ Response DTO │
+│(LoginUserInfo)     │(LoginResponse)
+└──────────────┘     └──────────────┘
+```
+
+**규칙:**
+1. **Service는 내부용 DTO 반환**
+   - `AuthService.login()` → `LoginUserInfo` 반환
+   - 토큰과 사용자 정보를 포함하는 서비스 내부 데이터 구조
+
+2. **Response DTO는 변환 로직 포함**
+   - `LoginResponse.from(LoginUserInfo)` static 메서드 제공
+   - Service DTO를 Response DTO로 변환하는 책임을 가짐
+
+3. **Controller는 단순 호출 & 변환만 담당**
+   ```java
+   // Good
+   LoginUserInfo info = authService.login(userId, password);
+   return ResponseEntity.ok(LoginResponse.from(info));
+
+   // Bad (Service가 Response에 의존)
+   return ResponseEntity.ok(authService.login(userId, password));
+   ```
+
+**이점:**
+- Service가 Controller/API 구조 변화에 영향받지 않음
+- 같은 Service를 다양한 Response 형식으로 사용 가능 (REST, GraphQL 등)
+- 계층간 강한 결합도 제거
+- DTO 변환 로직이 명확하게 위치
+
 ### Current Limitations
 - Refresh token logic is **not implemented** (TODO in `AuthenticationInterceptor.java:29`)
 - Secret key is hardcoded in `JwtUtil` (should be externalized to application.yml)

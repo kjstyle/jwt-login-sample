@@ -3,6 +3,7 @@ package kjstyle.jwtloginsample.auth;
 import jakarta.validation.Valid;
 import kjstyle.jwtloginsample.auth.dto.LoginRequest;
 import kjstyle.jwtloginsample.auth.dto.LoginResponse;
+import kjstyle.jwtloginsample.auth.dto.LoginUserInfo;
 import kjstyle.jwtloginsample.auth.dto.SignUpRequest;
 import kjstyle.jwtloginsample.user.User;
 import kjstyle.jwtloginsample.user.UserService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 인증 관련 요청을 처리하는 컨트롤러
  * /open 경로는 인터셉터에서 제외되어 있음
+ *
+ * Service DTO를 Response DTO로 변환하여 응답
  */
 @Slf4j
 @RestController
@@ -47,8 +50,8 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        LoginResponse loginResponse = authService.login(loginRequest.getUserId(), loginRequest.getPassword());
-        return ResponseEntity.ok(loginResponse);
+        LoginUserInfo loginUserInfo = authService.login(loginRequest.getUserId(), loginRequest.getPassword());
+        return ResponseEntity.ok(LoginResponse.from(loginUserInfo));
     }
 
     /**
