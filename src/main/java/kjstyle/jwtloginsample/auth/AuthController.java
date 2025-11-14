@@ -5,6 +5,7 @@ import kjstyle.jwtloginsample.auth.dto.LoginRequest;
 import kjstyle.jwtloginsample.auth.dto.LoginResponse;
 import kjstyle.jwtloginsample.auth.dto.LoginUserInfo;
 import kjstyle.jwtloginsample.auth.dto.SignUpRequest;
+import kjstyle.jwtloginsample.auth.dto.UserSignUpResponse;
 import kjstyle.jwtloginsample.user.User;
 import kjstyle.jwtloginsample.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +40,7 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseEntity<UserSignUpResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         User user = userService.signUp(signUpRequest.getUserId(), signUpRequest.getPassword());
-        UserSignUpResponse response = new UserSignUpResponse(user.getUserNo(), user.getUserId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserSignUpResponse.from(user));
     }
 
     /**
@@ -52,15 +52,5 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         LoginUserInfo loginUserInfo = authService.login(loginRequest.getUserId(), loginRequest.getPassword());
         return ResponseEntity.ok(LoginResponse.from(loginUserInfo));
-    }
-
-    /**
-     * 회원가입 응답 DTO (inner class)
-     */
-    @lombok.Getter
-    @lombok.AllArgsConstructor
-    static class UserSignUpResponse {
-        private Long userNo;
-        private String userId;
     }
 }
