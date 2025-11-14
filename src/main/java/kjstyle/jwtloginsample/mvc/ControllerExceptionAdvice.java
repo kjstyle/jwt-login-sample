@@ -1,5 +1,7 @@
 package kjstyle.jwtloginsample.mvc;
 
+import kjstyle.jwtloginsample.exceptions.DuplicateUserException;
+import kjstyle.jwtloginsample.exceptions.InvalidCredentialsException;
 import kjstyle.jwtloginsample.exceptions.UnauthenticatedException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +20,16 @@ public class ControllerExceptionAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(UnauthenticatedException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(DuplicateUserException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(InvalidCredentialsException e) {
         return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
