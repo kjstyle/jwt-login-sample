@@ -92,6 +92,24 @@ The authentication system is designed around **separation of concerns**, keeping
 - Controller tests extend `BaseMockMvcTest`
 - Unit tests extend `BaseTest`
 
+**⚠️ Critical Test Rule:**
+- **모든 코드 수정 후 전체 테스트 실행 필수**
+  ```bash
+  ./gradlew test
+  ```
+- **변경의 영향도 분석 필수:**
+  - 수정한 클래스를 사용하는 모든 테스트 확인
+  - 기존 테스트가 깨졌다면 원인 파악 후 수정
+  - 테스트가 깨지지 않으면 커밋 진행
+
+**테스트 수정 체크리스트:**
+1. 코드 변경 후 즉시 `./gradlew test` 실행
+2. FAILED 테스트 발생 시:
+   - 원인 분석 (API 변경, 반환 타입 변경, 메서드명 변경 등)
+   - 해당 테스트 코드 수정
+   - 다시 전체 테스트 실행
+3. 모든 테스트가 PASSED되었을 때만 커밋
+
 ## Important Notes
 
 ### Code Style Conventions (from git history)
