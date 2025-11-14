@@ -6,8 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * 사용자 관련 비즈니스 로직을 처리하는 서비스
+ * Domain 계층으로 저장소 접근을 추상화하고,
+ * 예외는 호출처의 맥락에 따라 처리하도록 Optional을 반환
  */
 @Slf4j
 @Service
@@ -44,20 +48,18 @@ public class UserService {
     /**
      * 사용자 번호로 사용자 정보를 조회합니다.
      * @param userNo 사용자 번호
-     * @return 사용자 정보
+     * @return 사용자 정보 (Optional)
      */
-    public User getUserByNo(Long userNo) {
-        return userRepository.findById(userNo)
-                .orElse(null);
+    public Optional<User> findByNo(Long userNo) {
+        return userRepository.findById(userNo);
     }
 
     /**
      * 사용자 ID로 사용자 정보를 조회합니다.
      * @param userId 사용자 ID
-     * @return 사용자 정보
+     * @return 사용자 정보 (Optional)
      */
-    public User getUserByUserId(String userId) {
-        return userRepository.findByUserId(userId)
-                .orElse(null);
+    public Optional<User> findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
     }
 }

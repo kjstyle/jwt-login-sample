@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * 인증 관련 비즈니스 로직을 처리하는 서비스
- * 서비스는 내부용 DTO만 반환하고, Controller가 Response DTO로 변환함
+ * Business 계층으로서 API 규칙에 맞는 예외를 발생시킴
+ * 서비스는 내부용 DTO(LoginUserInfo)를 반환하고, Controller가 Response DTO로 변환함
  */
 @Slf4j
 @Service
@@ -31,11 +32,9 @@ public class AuthService {
      * @throws InvalidCredentialsException 사용자 없음 또는 비밀번호 불일치
      */
     public LoginUserInfo login(String userId, String password) {
-        // 1. 사용자 조회
-        User user = userService.getUserByUserId(userId);
-        if (user == null) {
-            throw new InvalidCredentialsException();
-        }
+        // 1. 사용자 조회 (UserService는 Optional 반환)
+        User user = userService.findByUserId(userId)
+                .orElseThrow(() -> new InvalidCredentialsException());
 
         // 2. 비밀번호 검증
         if (!passwordEncoder.matches(password, user.getPassword())) {
