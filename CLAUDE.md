@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Spring Boot 3.3.3 sample project demonstrating JWT-based authentication using Spring MVC interceptors and argument resolvers. The project uses Java 21 and Gradle as the build tool.
+This is a Spring Boot 3.4.0 sample project demonstrating JWT-based authentication using Spring MVC interceptors and argument resolvers. The project uses Java 21 and Gradle as the build tool.
 
 **Key Requirements:**
 - Access token for authentication, refresh token for renewal (refresh logic is TODO)
@@ -165,7 +165,24 @@ Service 계층          Controller 계층
 - Exception handling for expired tokens exists but refresh flow is incomplete
 
 ### Dependencies
-- Spring Boot 3.3.3 (Web, Validation)
+- Spring Boot: 3.4.0 (upgraded from 3.3.3)
+  - Spring Data JPA with Hibernate 6.6.2
+  - Tomcat 10.1.33 (embedded)
+  - Spring Security (for PasswordEncoder)
 - jjwt (JWT library): 0.12.6
 - Lombok: for reducing boilerplate
 - JUnit 5 + Spring Boot Test
+- H2 Database (in-memory)
+
+### Upgrade Information (3.3.3 → 3.4.0)
+
+**Validation Status:**
+✅ All 22 tests passed
+✅ Application boots successfully
+✅ No breaking changes detected
+✅ No code changes required
+
+**Dependencies Automatically Updated:**
+- Hibernate: 6.4.x → 6.6.2
+- Tomcat: 10.1.x → 10.1.33
+- Other Spring Boot managed dependencies updated automatically
